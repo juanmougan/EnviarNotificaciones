@@ -20,12 +20,22 @@ public class MainActivity extends ActionBarActivity {
     private void loadSubscriptionListSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.subscription_list_spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.mock_sl, android.R.layout.simple_spinner_item);
+        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        //        R.array.mock_sl, android.R.layout.simple_spinner_item);
+        String[] subscriptionListNames = getSubscriptionListNames();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, subscriptionListNames);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
+    }
+
+    // TODO this should be in a Processor layer
+    // which extracts these Strings from a subscriptionListService.getSubscriptionLists() web call
+    private String[] getSubscriptionListNames() {
+        String[] names = {"Mock todos Info", "Mock industrial", "Mock Quimica General"};
+        return names;
     }
 
     @Override
