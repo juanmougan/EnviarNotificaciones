@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="mock_sl">
-        <item>Mock todos Info</item>
-        <item>Mock industrial</item>
-        <item>Mock Quimica General</item>
-    </string-array>
-</resources>

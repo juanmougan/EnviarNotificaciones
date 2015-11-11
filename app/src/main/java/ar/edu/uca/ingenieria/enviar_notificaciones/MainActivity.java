@@ -19,9 +19,6 @@ public class MainActivity extends ActionBarActivity {
 
     private void loadSubscriptionListSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.subscription_list_spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-        //        R.array.mock_sl, android.R.layout.simple_spinner_item);
         String[] subscriptionListNames = getSubscriptionListNames();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, subscriptionListNames);
