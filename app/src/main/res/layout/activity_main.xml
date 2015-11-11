@@ -19,7 +19,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/subscription_list_label_text"/>
             <Spinner
-                android:id="@+id/subscription_list"
+                android:id="@+id/subscription_list_spinner"
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="match_parent"
