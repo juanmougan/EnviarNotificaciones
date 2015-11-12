@@ -7,8 +7,15 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import ar.edu.uca.ingenieria.enviar_notificaciones.processor.SubscriptionListProcessor;
+import ar.edu.uca.ingenieria.enviar_notificaciones.processor.SubscriptionListProcessorMockImpl;
+
 
 public class MainActivity extends ActionBarActivity {
+
+    // TODO inject this
+    private SubscriptionListProcessor subscriptionListProcessor =
+            new SubscriptionListProcessorMockImpl();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,20 +26,13 @@ public class MainActivity extends ActionBarActivity {
 
     private void loadSubscriptionListSpinner() {
         Spinner spinner = (Spinner) findViewById(R.id.subscription_list_spinner);
-        String[] subscriptionListNames = getSubscriptionListNames();
+        String[] subscriptionListNames = this.subscriptionListProcessor.getSubscriptionListNames();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, subscriptionListNames);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-    }
-
-    // TODO this should be in a Processor layer
-    // which extracts these Strings from a subscriptionListService.getSubscriptionLists() web call
-    private String[] getSubscriptionListNames() {
-        String[] names = {"Mock todos Info", "Mock industrial", "Mock Quimica General"};
-        return names;
     }
 
     @Override
