@@ -2,11 +2,15 @@ package ar.edu.uca.ingenieria.enviar_notificaciones;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import ar.edu.uca.ingenieria.enviar_notificaciones.model.SubscriptionList;
 import ar.edu.uca.ingenieria.enviar_notificaciones.processor.SubscriptionListProcessor;
 import ar.edu.uca.ingenieria.enviar_notificaciones.processor.SubscriptionListProcessorMockImpl;
 
@@ -14,21 +18,43 @@ import ar.edu.uca.ingenieria.enviar_notificaciones.processor.SubscriptionListPro
 public class MainActivity extends ActionBarActivity {
 
     // TODO inject this
+    // TODO 2: do I need a processor or just a service?
     private SubscriptionListProcessor subscriptionListProcessor =
             new SubscriptionListProcessorMockImpl();
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setUpSubscriptionListSpinner();
         loadSubscriptionListSpinner();
     }
 
+    private void setUpSubscriptionListSpinner() {
+        spinner = (Spinner) findViewById(R.id.subscription_list_spinner);
+        loadSubscriptionListSpinner();
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // With parent.getItemAtPosition(position) I get mi SL object
+                SubscriptionList selectedSubscriptionList =
+                        (SubscriptionList) parent.getItemAtPosition(position);
+                Log.d("MainActivity listener", "Selected: " + selectedSubscriptionList);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.d("MainActivity listener", "Nothing selected");
+            }
+        });
+    }
+
     private void loadSubscriptionListSpinner() {
-        Spinner spinner = (Spinner) findViewById(R.id.subscription_list_spinner);
-        String[] subscriptionListNames = this.subscriptionListProcessor.getSubscriptionListNames();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, subscriptionListNames);
+        SubscriptionList[] subscriptionLists = this.subscriptionListProcessor
+                .getSubscriptionListNames();
+        ArrayAdapter<SubscriptionList> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, subscriptionLists);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner

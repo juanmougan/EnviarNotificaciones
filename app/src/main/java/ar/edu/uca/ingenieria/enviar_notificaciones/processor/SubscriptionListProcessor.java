@@ -1,5 +1,7 @@
 package ar.edu.uca.ingenieria.enviar_notificaciones.processor;
 
+import ar.edu.uca.ingenieria.enviar_notificaciones.model.SubscriptionList;
+
 /**
  * Handles processing operations on data related to SubscriptionLists
  *
@@ -7,6 +9,6 @@ package ar.edu.uca.ingenieria.enviar_notificaciones.processor;
  */
 public interface SubscriptionListProcessor {
 
-    String[] getSubscriptionListNames();
+    SubscriptionList[] getSubscriptionListNames();
 
 }
