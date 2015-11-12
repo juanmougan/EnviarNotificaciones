@@ -64,6 +64,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/send_button"
         android:text="@string/send_notification_button"/>
 
 </LinearLayout>

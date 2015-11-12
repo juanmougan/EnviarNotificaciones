@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import ar.edu.uca.ingenieria.enviar_notificaciones.model.SubscriptionList;
@@ -22,13 +24,28 @@ public class MainActivity extends ActionBarActivity {
     private SubscriptionListProcessor subscriptionListProcessor =
             new SubscriptionListProcessorMockImpl();
     private Spinner spinner;
+    private Button button;
+    private EditText notificationTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpSubscriptionListSpinner();
-        loadSubscriptionListSpinner();
+        setUpSendButton();
+        notificationTitle = (EditText) findViewById(R.id.notification_title);
+    }
+
+    private void setUpSendButton() {
+        button = (Button) findViewById(R.id.send_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO handle click
+                Log.d("MainActivityBtnClick", "Title: " + MainActivity.this.notificationTitle
+                        .getText().toString());
+            }
+        });
     }
 
     private void setUpSubscriptionListSpinner() {
