@@ -1,5 +1,7 @@
 package ar.edu.uca.ingenieria.enviar_notificaciones.service;
 
+import java.util.List;
+
 import ar.edu.uca.ingenieria.enviar_notificaciones.model.SubscriptionList;
 import retrofit.Callback;
 import retrofit.http.GET;
@@ -12,6 +14,6 @@ import retrofit.http.GET;
 public interface SubscriptionListService {
 
     @GET("/subscriptionlists")
-    SubscriptionList getSubscriptionLists();
+    void getSubscriptionLists(Callback<List<SubscriptionList>> subscriptionLists);
 
 }
