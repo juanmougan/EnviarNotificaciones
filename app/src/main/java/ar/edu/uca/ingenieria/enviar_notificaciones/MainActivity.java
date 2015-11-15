@@ -13,28 +13,38 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.List;
+
+import ar.edu.uca.ingenieria.enviar_notificaciones.exception.NotificationException;
+import ar.edu.uca.ingenieria.enviar_notificaciones.manager.MessageManager;
+import ar.edu.uca.ingenieria.enviar_notificaciones.manager.NotificationCallback;
+import ar.edu.uca.ingenieria.enviar_notificaciones.manager.SubscriptionListManager;
+import ar.edu.uca.ingenieria.enviar_notificaciones.manager.mock.MessageManagerMockImpl;
 import ar.edu.uca.ingenieria.enviar_notificaciones.model.Message;
 import ar.edu.uca.ingenieria.enviar_notificaciones.model.SubscriptionList;
-import ar.edu.uca.ingenieria.enviar_notificaciones.processor.SubscriptionListProcessor;
-import ar.edu.uca.ingenieria.enviar_notificaciones.processor.SubscriptionListProcessorMockImpl;
+import ar.edu.uca.ingenieria.enviar_notificaciones.manager.mock.SubscriptionListManagerMockImpl;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    // TODO move to string files
+    private static final String ERROR_FETCHING_LISTS = "Error al leer las listas de envío del backend: ";
+    private static final String ERROR_SENDING_MSG = "Error al enviar el mensaje: ";
+    private static final String MESSAGE_SENT_OK = "El mensaje se envió exitosamente: ";
     // TODO inject this
-    // TODO 2: do I need a processor or just a service?
-    private SubscriptionListProcessor subscriptionListProcessor =
-            new SubscriptionListProcessorMockImpl();
-    private Spinner spinner;
-    private Button button;
+    private SubscriptionListManager subscriptionListManager =
+            new SubscriptionListManagerMockImpl();
+    private MessageManager messageManager =
+            new MessageManagerMockImpl();
     private EditText notificationTitle;
     private EditText notificationMessage;
     private SubscriptionList selectedSubscriptionList;
+    private SubscriptionList[] subscriptionLists;       // The adapter needs an Array, not a List...
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loadSubscriptionLists();
         setUpSubscriptionListSpinner();
         setUpSendButton();
         setUpTitleAndMessage();
@@ -46,13 +56,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void setUpSendButton() {
-        button = (Button) findViewById(R.id.send_button);
+        Button button = (Button) findViewById(R.id.send_button);
         button.setOnClickListener(new SendButtonOnClickListener());
     }
 
     private void setUpSubscriptionListSpinner() {
-        spinner = (Spinner) findViewById(R.id.subscription_list_spinner);
-        loadSubscriptionListSpinner();
+        Spinner spinner = (Spinner) findViewById(R.id.subscription_list_spinner);
+        ArrayAdapter<SubscriptionList> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, subscriptionLists);
+        // Using a simple layout for the Spinner
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -67,21 +81,36 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private void loadSubscriptionListSpinner() {
-        SubscriptionList[] subscriptionLists = this.subscriptionListProcessor
-                .getSubscriptionListNames();
-        ArrayAdapter<SubscriptionList> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, subscriptionLists);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+    private void loadSubscriptionLists() {
+        this.subscriptionListManager.getSubscriptionLists(new NotificationCallback<List<SubscriptionList>>() {
+            @Override
+            public void onSuccess(List<SubscriptionList> result) {
+                // Convert to array
+                MainActivity.this.subscriptionLists = result.toArray(new SubscriptionList[result.size()]);
+            }
+
+            @Override
+            public void onFailure(NotificationException ex) {
+                Toast.makeText(MainActivity.this, ERROR_FETCHING_LISTS + ex.getCause() + " - " + ex.getMessage(),
+                        Toast.LENGTH_LONG).show();
+                MainActivity.this.subscriptionLists = new SubscriptionList[0];
+            }
+        });
     }
 
-
     private void sendMessage(Message message) {
-        // TODO hit an async service here...
-        Toast.makeText(this, message.toString(), Toast.LENGTH_LONG).show();
+        this.messageManager.sendMessage(message, new NotificationCallback<Message>() {
+            @Override
+            public void onSuccess(Message result) {
+                Toast.makeText(MainActivity.this, MESSAGE_SENT_OK + result.toString(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(NotificationException ex) {
+                Toast.makeText(MainActivity.this, ERROR_SENDING_MSG + ex.getCause() + " - " + ex.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private class SendButtonOnClickListener implements View.OnClickListener {
