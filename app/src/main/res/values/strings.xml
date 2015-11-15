@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Enviar Notificaciones</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="notification_title_label_text">Título</string>
+    <string name="notification_message_label_text">Mensaje</string>
+    <string name="notification_title_hint_text">Título del mensaje</string>
+    <string name="notification_message_hint_text">Contenido del mensaje</string>
+    <string name="subscription_list_label_text">Enviar a</string>
+    <string name="send_notification_button">Enviar</string>
     <string name="action_settings">Settings</string>
 </resources>
