@@ -33,8 +33,14 @@ public class SubscriptionListManagerMockImpl implements SubscriptionListManager 
      * @return if the method should fail
      */
     private boolean shouldFail() {
-        int rnd = rn.nextInt(10);
-        return rnd % 2 == 0;
+        //int rnd = rn.nextInt(10);
+        //return rnd % 2 == 0;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

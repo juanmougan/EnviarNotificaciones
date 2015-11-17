@@ -13,7 +13,7 @@ import retrofit.http.GET;
  */
 public interface SubscriptionListService {
 
-    @GET("/subscriptionlists")
+    @GET("/subscription_lists")
     void getSubscriptionLists(Callback<List<SubscriptionList>> subscriptionLists);
 
 }

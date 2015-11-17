@@ -13,8 +13,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import java.util.List;
 
+import ar.edu.uca.ingenieria.enviar_notificaciones.config.WebServiceModule;
 import ar.edu.uca.ingenieria.enviar_notificaciones.exception.NotificationException;
 import ar.edu.uca.ingenieria.enviar_notificaciones.manager.MessageManager;
 import ar.edu.uca.ingenieria.enviar_notificaciones.manager.NotificationCallback;
@@ -31,11 +35,8 @@ public class MainActivity extends ActionBarActivity {
     private static final String ERROR_FETCHING_LISTS = "Error al leer las listas de envío del backend: ";
     private static final String ERROR_SENDING_MSG = "Error al enviar el mensaje: ";
     private static final String MESSAGE_SENT_OK = "El mensaje se envió exitosamente: ";
-    // TODO inject this
-    private SubscriptionListManager subscriptionListManager =
-            new SubscriptionListManagerMockImpl();
-    private MessageManager messageManager =
-            new MessageManagerMockImpl();
+    private SubscriptionListManager subscriptionListManager; //= new SubscriptionListManagerMockImpl();
+    private MessageManager messageManager; //= new MessageManagerMockImpl();
     private EditText notificationTitle;
     private EditText notificationMessage;
     private SubscriptionList selectedSubscriptionList;
@@ -44,8 +45,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        injectManagers();
         loadSubscriptionLists();
-        setUpSubscriptionListSpinner();
         setUpSendButton();
         setUpTitleAndMessage();
     }
@@ -82,20 +83,28 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void loadSubscriptionLists() {
-        this.subscriptionListManager.getSubscriptionLists(new NotificationCallback<List<SubscriptionList>>() {
+
+        NotificationCallback<List<SubscriptionList>> subscriptionListCallback = new NotificationCallback<List<SubscriptionList>>() {
             @Override
             public void onSuccess(List<SubscriptionList> result) {
                 // Convert to array
                 MainActivity.this.subscriptionLists = result.toArray(new SubscriptionList[result.size()]);
+                // TODO pass the SL as a parameter instead
+                MainActivity.this.setUpSubscriptionListSpinner();
             }
 
             @Override
             public void onFailure(NotificationException ex) {
                 Toast.makeText(MainActivity.this, ERROR_FETCHING_LISTS + ex.getCause() + " - " + ex.getMessage(),
                         Toast.LENGTH_LONG).show();
+                // TODO pass an empty array to the spinner set up here
                 MainActivity.this.subscriptionLists = new SubscriptionList[0];
             }
-        });
+        };
+        this.subscriptionListManager.getSubscriptionLists(subscriptionListCallback);
+
+        //new SubscriptionListManagerMockImpl().getSubscriptionLists(subscriptionListCallback);
+
     }
 
     private void sendMessage(Message message) {
@@ -123,6 +132,12 @@ public class MainActivity extends ActionBarActivity {
             MainActivity.this.sendMessage(message);
         }
 
+    }
+
+    private void injectManagers() {
+        Injector injector = Guice.createInjector(new WebServiceModule());
+        this.subscriptionListManager = injector.getInstance(SubscriptionListManager.class);
+        this.messageManager = injector.getInstance(MessageManager.class);
     }
 
     @Override
