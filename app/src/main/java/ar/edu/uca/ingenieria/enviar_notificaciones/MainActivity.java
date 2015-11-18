@@ -40,7 +40,6 @@ public class MainActivity extends ActionBarActivity {
     private EditText notificationTitle;
     private EditText notificationMessage;
     private SubscriptionList selectedSubscriptionList;
-    private SubscriptionList[] subscriptionLists;       // The adapter needs an Array, not a List...
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +60,7 @@ public class MainActivity extends ActionBarActivity {
         button.setOnClickListener(new SendButtonOnClickListener());
     }
 
-    private void setUpSubscriptionListSpinner() {
+    private void setUpSubscriptionListSpinner(SubscriptionList[] subscriptionLists) {
         Spinner spinner = (Spinner) findViewById(R.id.subscription_list_spinner);
         ArrayAdapter<SubscriptionList> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, subscriptionLists);
@@ -88,17 +87,17 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onSuccess(List<SubscriptionList> result) {
                 // Convert to array
-                MainActivity.this.subscriptionLists = result.toArray(new SubscriptionList[result.size()]);
-                // TODO pass the SL as a parameter instead
-                MainActivity.this.setUpSubscriptionListSpinner();
+                SubscriptionList[] subscriptionLists;
+                subscriptionLists = result.toArray(new SubscriptionList[result.size()]);
+                MainActivity.this.setUpSubscriptionListSpinner(subscriptionLists);
             }
 
             @Override
             public void onFailure(NotificationException ex) {
                 Toast.makeText(MainActivity.this, ERROR_FETCHING_LISTS + ex.getCause() + " - " + ex.getMessage(),
                         Toast.LENGTH_LONG).show();
-                // TODO pass an empty array to the spinner set up here
-                MainActivity.this.subscriptionLists = new SubscriptionList[0];
+                SubscriptionList[] subscriptionLists = new SubscriptionList[0];
+                MainActivity.this.setUpSubscriptionListSpinner(subscriptionLists);
             }
         };
         this.subscriptionListManager.getSubscriptionLists(subscriptionListCallback);
