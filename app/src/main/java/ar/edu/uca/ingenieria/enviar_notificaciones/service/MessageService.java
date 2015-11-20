@@ -1,7 +1,5 @@
 package ar.edu.uca.ingenieria.enviar_notificaciones.service;
 
-import android.app.Notification;
-
 import ar.edu.uca.ingenieria.enviar_notificaciones.model.Message;
 import retrofit.Callback;
 import retrofit.http.Body;

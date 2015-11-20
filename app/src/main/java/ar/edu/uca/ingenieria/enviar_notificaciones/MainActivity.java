@@ -126,7 +126,7 @@ public class MainActivity extends ActionBarActivity {
         public void onClick(View v) {
             Message message = new Message(MainActivity.this.notificationTitle.getText().toString(),
                     MainActivity.this.notificationMessage.getText().toString(),
-                    MainActivity.this.selectedSubscriptionList);
+                    MainActivity.this.selectedSubscriptionList.getId());
             Log.d("MainActivityBtnClick", "About to send: " + message.toString());
             MainActivity.this.sendMessage(message);
         }

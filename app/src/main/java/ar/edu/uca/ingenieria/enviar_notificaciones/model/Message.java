@@ -1,5 +1,7 @@
 package ar.edu.uca.ingenieria.enviar_notificaciones.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Notification that will be sent to a given SubscriptionList
  *
@@ -11,12 +13,13 @@ public class Message {
 
     private String message;
 
-    private SubscriptionList deliverToList;
+    @SerializedName("subscription_list")
+    private int subscriptionListId;
 
-    public Message(String title, String message, SubscriptionList deliverToList) {
+    public Message(String title, String message, int subscriptionListId) {
         this.title = title;
         this.message = message;
-        this.deliverToList = deliverToList;
+        this.subscriptionListId = subscriptionListId;
     }
 
     public String getTitle() {
@@ -35,17 +38,17 @@ public class Message {
         this.message = message;
     }
 
-    public SubscriptionList getDeliverToList() {
-        return deliverToList;
+    public int getSubscriptionListId() {
+        return subscriptionListId;
     }
 
-    public void setDeliverToList(SubscriptionList deliverToList) {
-        this.deliverToList = deliverToList;
+    public void setSubscriptionListId(int subscriptionListId) {
+        this.subscriptionListId = subscriptionListId;
     }
 
     @Override
     public String toString() {
         return "Title: " + this.title + "\tMessage: " + this.message + "\tDeliver to: "
-                + this.deliverToList.toString();
+                + this.subscriptionListId;
     }
 }
