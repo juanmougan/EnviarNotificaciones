@@ -48,7 +48,6 @@ public class Message {
 
     @Override
     public String toString() {
-        return "Title: " + this.title + "\tMessage: " + this.message + "\tDeliver to: "
-                + this.subscriptionListId;
+        return "Título: " + this.title + "\tMensaje: " + this.message;
     }
 }
